@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Fortnite NoSS</title>
+
+	<!-- Include eel.js - note this file doesn't exist in the 'web' directory -->
+	<script type="text/javascript" src="/eel.js"></script>
+
+	<!-- Include jQuery -->
+	<script src="include/jquery-3.5.1.min.js"></script>
+
+	<!-- Include Bootstrap -->
+	<link rel="stylesheet" href="include/bootstrap-4.3.1-dist/css/bootstrap.min.css">
+	<script src="include/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+
+	<!-- Include DataTables -->
+	<link rel="stylesheet" type="text/css" href="include/DataTables/datatables.min.css">
+	<script type="text/javascript" src="include/DataTables/datatables.min.js"></script>
+
+	<script type="text/javascript">
+		var datatable;
+		async function initDatatable() {
+			var all_players = await eel.get_all_players()();
+			datatable = $('#table_id').DataTable({
+				data: all_players,
+				columns: [
+					null,
+					null,
+					null,
+					{ 'visible': false }
+				],
+				order: [[2, "desc"]],
+				bLengthChange: false,
+				bInfo: false
+			});
+		}
+		initDatatable();
+
+		async function updateDatatable() {
+			var all_players = await eel.get_all_players()();
+			datatable.clear().rows.add(all_players).draw();
+		}
+
+		async function analyzeReplays() {
+			var saved_dir = await eel.read_replays_dir_path()();
+			if (!saved_dir) {
+				$('.alert').show();
+				return;
+			}
+
+			var button = document.getElementById("buttonAnalyze");
+			var initialContent = button.innerHTML;
+			button.innerHTML = "Running...";
+			button.classList.add("disabled");
+			if (await eel.analyze_replays()()) {
+				updateDatatable();
+			}
+			button.innerHTML = initialContent;
+			button.classList.remove('disabled');
+		}
+
+		async function addPlayer() {
+			var player = document.getElementById("player_username_id").value;
+			if (player == "") {
+				document.getElementById("player_username_id").placeholder = "Empty input";
+				document.getElementById("player_username_id").style = "background-color: #FBBFBF;";
+				return;
+			} else if (document.getElementById("radioPlayerID").checked && !(/^[A-Za-z0-9]+$/.test(player))) {
+				document.getElementById("player_username_id").placeholder = "Invalid account ID";
+				document.getElementById("player_username_id").style = "background-color: #FBBFBF;";
+				return;
+			}
+
+			var res = false;
+			if (document.getElementById("radioPlayerID").checked) {
+				res = await eel.add_player(player, 'id')();
+			} else if (document.getElementById("radioPlayerUsername").checked) {
+				res = await eel.add_player(player, 'username')();
+			}
+
+			if (res) {
+				document.getElementById("player_username_id").placeholder = "Success";
+				document.getElementById("player_username_id").style = "background-color: #D3FBBF;";
+				updateDatatable();
+			} else {
+				document.getElementById("player_username_id").placeholder = "Failed adding this player";
+				document.getElementById("player_username_id").style = "background-color: #FBBFBF;";
+			}
+		}
+	</script>
+
+	<style>
+		#table_id thead,
+		#table_id th,
+		#table_id tr,
+		#table_id td {
+			text-align: center;
+		}
+
+		.dataTables_wrapper .dataTables_paginate .paginate_button {
+			padding: 0.1em;
+			 !important
+		}
+
+		.alert {
+			display: none;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Navigation -->
+	<nav class="navbar navbar-expand navbar-dark bg-dark">
+		<a class="navbar-brand" href="#">Fortnite NoSS</a>
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item active">
+					<a class="nav-link" href="#">Tracker <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="settings.html">Settings</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="about.html">About</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+
+
+	<!-- Analyze button -->
+	<div class="container mt-4 mb-4 text-center" style="font-size: 13px;">
+		<label class="h6 mb-4">
+			Analyze new replays<br />
+			<small class="text-muted">New replays are automatically detected</small>
+		</label>
+		<div class="text-center">
+			<button type="button" id="buttonAnalyze" class="btn btn-outline-info btn-sm"
+				onclick="analyzeReplays();">Analyze
+			</button>
+		</div>
+		<!-- Replay directory path Alert -->
+		<div class="alert alert-warning alert-dismissible mx-auto mt-5" role="alert" style="width: 80%;">
+			<p class="text-center">
+				Set a correct directory path in <a href="settings.html" class="alert-link">Settings</a>.
+			</p>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+	</div>
+	<hr>
+
+
+	<!-- Track New Player inputs -->
+	<div class="container mt-4 mb-4 text-center" style="font-size: 13px;">
+		<label class="h6 mb-4" for="player_username_id">
+			Track a new player<br />
+			<small class="text-muted">From now on, will track this player in your replays</small>
+		</label>
+		<div class="row justify-content-center align-items-center">
+			<div class="col input-group-sm">
+				<input type="text" id="player_username_id" class="form-control" style="width: 90%;"
+					placeholder="Player Username or ID" aria-label="Player Username or ID">
+			</div>
+			<div class="col-sm-4">
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="radioPlayer" id="radioPlayerUsername"
+						value="username" checked="checked">
+					<label class="form-check-label" for="radioPlayerUsername">Username</label>
+				</div>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="radioPlayer" id="radioPlayerID" value="id">
+					<label class="form-check-label" for="radioPlayerID">ID</label>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				<button type="button" class="btn btn-outline-success btn-sm" onclick="addPlayer();">Track</button>
+			</div>
+		</div>
+	</div>
+	<hr>
+
+
+	<!-- Table -->
+	<div class="container mt-4 text-center" style="font-size: 13px;">
+		<label class="h6 mb-4">
+			Visualize the data collected
+		</label>
+		<table id="table_id" class="display">
+			<thead>
+				<tr>
+					<th>Username</th>
+					<th>Account ID</th>
+					<th>Counter</th>
+					<th>Replays</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+
+</body>
+
+</html>
