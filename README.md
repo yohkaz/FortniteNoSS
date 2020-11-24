@@ -7,6 +7,6 @@ This app can be useful to streamers. It allows them to track suspicious players 
 <br />
 <br />
 
-<div style="text-align: center;">
+<p align="center">
 <img src="screenshots/screenshot.png" width="400px">
-</div>
+</p>
