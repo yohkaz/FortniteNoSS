@@ -5,12 +5,8 @@ from fortnite_noss import FortniteNoSS
 
 def init_gui():
     eel.init(r'gui')
-    #eel.start('main.html', port=0, size=(780, 900))
-    eel.start('main.html', size=(780, 900))
+    eel.start('main.html', port=0, size=(780, 900))
 
-
-def main():
-    pass
 
 # Expose FortniteNoSS methods
 @eel.expose
