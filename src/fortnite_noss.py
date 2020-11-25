@@ -59,6 +59,20 @@ class FortniteNoSS:
             return False
 
 
+    def reset_player(self, account_id):
+        try:
+            return self.db.reset_player(account_id)
+        except:
+            return False
+
+
+    def delete_player(self, account_id):
+        try:
+            return self.db.delete_player(account_id)
+        except:
+            return False
+
+
     def get_all_players(self):
         try:
             return self.db.find_all_players()

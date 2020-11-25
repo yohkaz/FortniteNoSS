@@ -36,6 +36,22 @@ def add_player(player, info):
         elif info == 'username':
             return noss.add_player_by_username(player)
 
+@eel.expose
+def reset_player(account_id):
+    if account_id is None or account_id == '':
+        return False
+
+    with FortniteNoSS() as noss:
+        return noss.reset_player(account_id)
+
+@eel.expose
+def delete_player(account_id):
+    if account_id is None or account_id == '':
+        return False
+
+    with FortniteNoSS() as noss:
+        return noss.delete_player(account_id)
+
 
 # Expose replays directory path operations
 @eel.expose

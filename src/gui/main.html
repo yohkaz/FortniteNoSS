@@ -28,14 +28,71 @@
 			datatable = $('#table_id').DataTable({
 				data: all_players,
 				columns: [
-					null,
-					null,
-					null,
-					{ 'visible': false }
+					{
+						'className': 'details-control',
+						'orderable': false,
+						'data': null,
+						'defaultContent': ''
+					},
+					{ 'data': 0 },
+					{ 'data': 1 },
+					{
+						'data': 2,
+						'searchable': false
+					},
+					{
+						'data': 3,
+						'visible': false,
+						'searchable': false
+					},
+					{
+						'className': 'reset-player',
+						'orderable': false,
+						'data': null,
+						'defaultContent': ''
+					},
+					{
+						'className': 'delete-player',
+						'orderable': false,
+						'data': null,
+						'defaultContent': ''
+					}
 				],
-				order: [[2, "desc"]],
+				order: [[3, "desc"]],
 				bLengthChange: false,
 				bInfo: false
+			});
+
+			// Add event listener for opening and closing replays
+			$('#table_id tbody').on('click', 'td.details-control', function () {
+				var tr = $(this).closest('tr');
+				var row = datatable.row(tr);
+
+				if (row.child.isShown()) {
+					// This row is already open - close it
+					row.child.hide();
+					tr.removeClass('shown');
+				} else {
+					// Open this row
+					row.child(row.data()[3].replace(/,/g, '<br />')).show();
+					tr.addClass('shown');
+				}
+			});
+
+			// Add event listener for reset a player
+			$('#table_id tbody').on('click', 'td.reset-player', async function () {
+				var tr = $(this).closest('tr');
+				var row = datatable.row(tr);
+				await eel.reset_player(row.data()[1])();
+				updateDatatable();
+			});
+
+			// Add event listener for deleting a player
+			$('#table_id tbody').on('click', 'td.delete-player', async function () {
+				var tr = $(this).closest('tr');
+				var row = datatable.row(tr);
+				await eel.delete_player(row.data()[1])();
+				updateDatatable();
 			});
 		}
 		initDatatable();
@@ -104,6 +161,29 @@
 		.dataTables_wrapper .dataTables_paginate .paginate_button {
 			padding: 0.1em;
 			 !important
+		}
+
+		td.details-control {
+			background: url('image/zoom-in.png') no-repeat center center;
+			background-size: 20px;
+			cursor: pointer;
+		}
+
+		tr.shown td.details-control {
+			background: url('image/zoom-out.png') no-repeat center center;
+			background-size: 16px;
+		}
+
+		td.reset-player {
+			background: url('image/reset-player.png') no-repeat center center;
+			background-size: 16px;
+			cursor: pointer;
+		}
+
+		td.delete-player {
+			background: url('image/delete-player.png') no-repeat center center;
+			background-size: 16px;
+			cursor: pointer;
 		}
 
 		.alert {
@@ -194,10 +274,13 @@
 		<table id="table_id" class="display">
 			<thead>
 				<tr>
+					<th></th>
 					<th>Username</th>
 					<th>Account ID</th>
-					<th>Counter</th>
-					<th>Replays</th>
+					<th># of matches</th>
+					<th></th>
+					<th></th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>

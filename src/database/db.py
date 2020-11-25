@@ -148,11 +148,22 @@ class Database:
         return True
 
 
-    def reset_player(self, account_id, username):
-        if self.delete_player(account_id) is False:
+    def reset_player(self, account_id):
+        current_player = self.find_player(account_id)
+        if current_player is None:
             return False
 
-        return self.create_player(account_id, username, [])
+        updated_player = (current_player[1], '', 0, current_player[0])
+        update_cmd = """
+                        UPDATE players
+                        SET username = ? ,
+                            replay_files = ? ,
+                            counter = ?
+                        WHERE account_id = ?
+                     """
+
+        self.insert_or_update_or_delete(update_cmd, updated_player)
+        return True
 
 
     def find_player(self, account_id):
