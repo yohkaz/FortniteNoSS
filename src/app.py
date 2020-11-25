@@ -2,6 +2,7 @@ import os
 import eel
 from fortnite_noss import FortniteNoSS
 
+noss = FortniteNoSS()
 
 def init_gui():
     eel.init(r'gui')
@@ -11,46 +12,40 @@ def init_gui():
 # Expose FortniteNoSS methods
 @eel.expose
 def get_all_players():
-    with FortniteNoSS() as noss:
-        return list(map(lambda p: (p[1], p[0], p[3], p[2]), noss.get_all_players()))
+    return list(map(lambda p: (p[1], p[0], p[3], p[2]), noss.get_all_players()))
 
 @eel.expose
 def reset_database():
-    with FortniteNoSS() as noss:
-        noss.reset_database()
+    noss.reset_database()
 
 @eel.expose
 def analyze_replays():
-    with FortniteNoSS() as noss:
-        noss.set_replays_dir(read_replays_dir_path())
-        return noss.analyze_replays()
+    noss.set_replays_dir(read_replays_dir_path())
+    return noss.analyze_replays()
 
 @eel.expose
 def add_player(player, info):
     if player is None or player == '':
         return False
 
-    with FortniteNoSS() as noss:
-        if info == 'id':
-            return noss.add_player_by_id(player.lower())
-        elif info == 'username':
-            return noss.add_player_by_username(player)
+    if info == 'id':
+        return noss.add_player_by_id(player.lower())
+    elif info == 'username':
+        return noss.add_player_by_username(player)
 
 @eel.expose
 def reset_player(account_id):
     if account_id is None or account_id == '':
         return False
 
-    with FortniteNoSS() as noss:
-        return noss.reset_player(account_id)
+    return noss.reset_player(account_id)
 
 @eel.expose
 def delete_player(account_id):
     if account_id is None or account_id == '':
         return False
 
-    with FortniteNoSS() as noss:
-        return noss.delete_player(account_id)
+    return noss.delete_player(account_id)
 
 
 # Expose replays directory path operations

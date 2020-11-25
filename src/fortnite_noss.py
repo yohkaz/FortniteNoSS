@@ -7,16 +7,8 @@ from database import Database
 
 class FortniteNoSS:
     def __init__(self):
-        self.db = Database(r'./data.db')
+        self.db_filename = r'./data.db'
         self.replays_dir = None
-
-
-    def __enter__(self):
-        return self
-
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.db.close()
 
 
     def set_replays_dir(self, path):
@@ -24,7 +16,8 @@ class FortniteNoSS:
 
 
     def reset_database(self):
-        self.db.clear_db()
+        with Database(self.db_filename) as db:
+            db.clear_db()
 
 
     def add_player_by_id(self, account_id):
@@ -46,76 +39,82 @@ class FortniteNoSS:
 
 
     def add_player(self, account_id, username):
-        try:
-            all_replays = self.db.find_all_replays()
+        with Database(self.db_filename) as db:
+            try:
+                all_replays = db.find_all_replays()
 
-            player_replays = []
-            for replay in all_replays:
-                if account_id in replay[2]:
-                    player_replays.append(replay[0])
+                player_replays = []
+                for replay in all_replays:
+                    if account_id in replay[2]:
+                        player_replays.append(replay[0])
 
-            return self.db.create_player(account_id, username, player_replays)
-        except:
-            return False
+                return db.create_player(account_id, username, player_replays)
+            except:
+                return False
 
 
     def reset_player(self, account_id):
-        try:
-            return self.db.reset_player(account_id)
-        except:
-            return False
+        with Database(self.db_filename) as db:
+            try:
+                return db.reset_player(account_id)
+            except:
+                return False
 
 
     def delete_player(self, account_id):
-        try:
-            return self.db.delete_player(account_id)
-        except:
-            return False
+        with Database(self.db_filename) as db:
+            try:
+                return db.delete_player(account_id)
+            except:
+                return False
 
 
     def get_all_players(self):
-        try:
-            return self.db.find_all_players()
-        except:
-            return False
+        with Database(self.db_filename) as db:
+            try:
+                return db.find_all_players()
+            except:
+                return False
 
 
     def analyze_replays(self):
         if self.replays_dir is None:
             return False
 
+        with Database(self.db_filename) as db:
+            try:
+                last_replay_file, last_replay_time = db.find_last_replay()
+            except:
+                return False
+
+            files = os.listdir(self.replays_dir)
+            # Filter out non replay files
+            files = list(filter(lambda x: x.endswith('.replay'), files))
+            # Filter out already analyzed replays
+            if last_replay_file:
+                files = list(filter(lambda x: os.path.getmtime(os.path.join(self.replays_dir, x)) > last_replay_time, files))
+            # Sort replays from older to newer
+            files.sort(key=lambda x: os.path.getmtime(os.path.join(self.replays_dir, x)))
+
+            # Analyze each replay
+            try:
+                #ss_players = db.find_all_players_ids()
+                ss_players = db.find_all_players()
+                for file in files:
+                    self.analyze_replay(self.replays_dir, file, ss_players, db)
+            except:
+                return False
+
+            return True
+
+
+    @staticmethod
+    def analyze_replay(replays_dir, replay_file, ss_players, db):
+        print('FortniteNoSS: Analyzing', replay_file)
         try:
-            last_replay_file, last_replay_time = self.db.find_last_replay()
-        except:
-            return False
-
-        files = os.listdir(self.replays_dir)
-        # Filter out non replay files
-        files = list(filter(lambda x: x.endswith('.replay'), files))
-        # Filter out already analyzed replays
-        if last_replay_file:
-            files = list(filter(lambda x: os.path.getmtime(os.path.join(self.replays_dir, x)) > last_replay_time, files))
-        # Sort replays from older to newer
-        files.sort(key=lambda x: os.path.getmtime(os.path.join(self.replays_dir, x)))
-
-        # Analyze each replay
-        try:
-            #ss_players = self.db.find_all_players_ids()
-            ss_players = self.db.find_all_players()
-            for file in files:
-                self.analyze_replay(file, ss_players)
-        except:
-            return False
-
-        return True
-
-
-    def analyze_replay(self, replay_file, ss_players):
-        print('Analyzing', replay_file)
-        try:
-            replay_path = os.path.join(self.replays_dir, replay_file)
+            replay_path = os.path.join(replays_dir, replay_file)
             players_ids = FortniteReplay.get_players_ids(replay_path)
-            self.db.create_replay(replay_file, os.path.getmtime(replay_path), players_ids)
+            db.create_replay(replay_file, os.path.getmtime(replay_path), players_ids)
         except:
             return False
 
@@ -130,7 +129,7 @@ class FortniteNoSS:
 
                 username = ss_player[1]
                 try:
-                    self.db.update_player(ss_player[0], username, [replay_file])
+                    db.update_player(ss_player[0], username, [replay_file])
                 except:
                     return False
 
@@ -179,4 +178,11 @@ class FortniteNoSS:
                     return None
 
         return response.json()['data']['account']['name']
+
+    @staticmethod
+    def get_exchange_code():
+        endpoint = r'https://www.epicgames.com/id/api/redirect?clientId=3446cd72694c4a4485d81b77adbb2141&responseType=code'
+        response = requests.get(endpoint)
+        print(response.text)
+
 

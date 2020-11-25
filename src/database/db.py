@@ -8,6 +8,14 @@ class Database:
         self.create_connection()
 
 
+    def __enter__(self):
+        return self
+
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
+
+
     def create_connection(self):
         """ Create a database connection to a SQLite database """
         try:
