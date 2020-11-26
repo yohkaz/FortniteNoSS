@@ -2,6 +2,7 @@ import os
 import time
 import requests
 
+from FortniteWebAPI import FortniteWebAPI
 from FortniteReplay import FortniteReplay
 from database import Database
 
@@ -9,15 +10,36 @@ class FortniteNoSS:
     def __init__(self):
         self.db_filename = r'./data.db'
         self.replays_dir = None
+        self.fortnitewebapi  = FortniteWebAPI()
+        self.fortnitewebapi.auth()
 
 
     def set_replays_dir(self, path):
         self.replays_dir = path
 
 
+    def fortnitewebapi_status(self):
+        return self.fortnitewebapi.auth_status()
+
+
+    def fortnitewebapi_set_auth_code(self, auth_code):
+        if not self.fortnitewebapi.generate_device_auth(auth_code):
+            return False
+
+        return self.fortnitewebapi.auth()
+
+
+    def fortnitewebapi_session_username(self):
+        return self.fortnitewebapi.session_username()
+
+
     def reset_database(self):
         with Database(self.db_filename) as db:
             db.clear_db()
+
+
+    def reset_auth(self):
+        self.fortnitewebapi.clear_device_auth_info()
 
 
     def add_player_by_id(self, account_id):
@@ -134,8 +156,10 @@ class FortniteNoSS:
                     return False
 
 
-    @staticmethod
-    def player_username_to_id(username):
+    def player_username_to_id(self, username):
+        if self.fortnitewebapi.auth_status():
+            return self.fortnitewebapi.player_by_username(username)
+
         endpoint = r'https://fortnite-api.com/v1/stats/br/v2?name=' + username
 
         # Send request 5 times
@@ -157,8 +181,10 @@ class FortniteNoSS:
         return response.json()['data']['account']['id']
 
 
-    @staticmethod
-    def player_id_to_username(account_id):
+    def player_id_to_username(self, account_id):
+        if self.fortnitewebapi.auth_status():
+            return self.fortnitewebapi.player_by_id(account_id)
+
         endpoint = r'https://fortnite-api.com/v1/stats/br/v2/' + account_id
 
         # Send request 5 times

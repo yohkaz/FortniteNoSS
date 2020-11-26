@@ -5,8 +5,9 @@ from fortnite_noss import FortniteNoSS
 noss = FortniteNoSS()
 
 def init_gui():
+    #noss.fortnitewebapi_set_auth_code('0e72e777ad574397b5c322c7b86705c5')
     eel.init(r'gui')
-    eel.start('main.html', port=0, size=(780, 900))
+    eel.start('auth.html', port=0, size=(780, 900))
 
 
 # Expose FortniteNoSS methods
@@ -46,6 +47,23 @@ def delete_player(account_id):
         return False
 
     return noss.delete_player(account_id)
+
+@eel.expose
+def fortnitewebapi_status():
+    return noss.fortnitewebapi_status()
+
+
+@eel.expose
+def fortnitewebapi_set_auth_code(auth_code):
+    return noss.fortnitewebapi_set_auth_code(auth_code)
+
+@eel.expose
+def fortnitewebapi_clear_auth():
+    return noss.reset_auth()
+
+@eel.expose
+def fortnitewebapi_session_username():
+    return noss.fortnitewebapi_session_username()
 
 
 # Expose replays directory path operations

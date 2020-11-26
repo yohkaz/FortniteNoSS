@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Fortnite NoSS</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="ressources/png" href="ressources/favicon.ico">
+
+    <!-- Include eel.js - note this file doesn't exist in the 'web' directory -->
+    <script type="text/javascript" src="/eel.js"></script>
+
+    <!-- Include jQuery -->
+    <script src="include/jquery-3.5.1.min.js"></script>
+
+    <!-- Include Bootstrap -->
+    <link rel="stylesheet" href="include/bootstrap-4.3.1-dist/css/bootstrap.min.css">
+    <script src="include/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+
+    <!-- Include DataTables -->
+    <link rel="stylesheet" type="text/css" href="include/DataTables/datatables.min.css">
+    <script type="text/javascript" charset="utf8" src="include/DataTables/datatables.min.js"></script>
+
+    <script type="text/javascript">
+        async function checkAuthStatus() {
+            var auth_status = await eel.fortnitewebapi_status()();
+            if (auth_status) {
+                document.getElementById("auth_steps").style.display = 'none';
+                var session_username = await eel.fortnitewebapi_session_username()();
+                var success_msg = 'Connected to Epic Servers as ' + session_username + '';
+                document.getElementById("auth_success_label").textContent = success_msg;
+                document.getElementById("auth_success_div").style.display = 'block';
+            } else {
+                document.getElementById("auth_success_div").style.display = 'none';
+                document.getElementById("auth_steps").style.display = 'block';
+            }
+        }
+        checkAuthStatus();
+
+        async function setAuthCode() {
+            var auth_code = document.getElementById("auth_input").value;
+            var auth_result = await eel.fortnitewebapi_set_auth_code(auth_code)();
+            if (auth_result) {
+                checkAuthStatus();
+            } else {
+                document.getElementById("auth_input").placeholder = "Invalid auth code";
+                document.getElementById("auth_input").style = "background-color: #FBBFBF;";
+            }
+        }
+
+        function openEpicGamesPage() {
+            window.open('https://www.epicgames.com/');
+        }
+
+        function openAuthCodePage() {
+            window.open('https://www.epicgames.com/id/api/redirect?clientId=3446cd72694c4a4485d81b77adbb2141&responseType=code');
+        }
+
+        function openTracker() {
+            document.location.href = 'tracker.html';
+        }
+    </script>
+
+    <style>
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+        <a class="navbar-brand" href="">Fortnite NoSS</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="">Auth <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="tracker.html">Tracker</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="settings.html">Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="about.html">About</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="auth_steps" style="font-size: 14px; display: none;">
+        <!-- Auth -->
+        <div class="mt-4 mb-2 text-center">
+            <label class="h5 mb-4">
+                Authentication to Epic Servers<br />
+                <small class="text-muted">These steps should be required only once</small>
+            </label>
+        </div>
+        <hr>
+
+        <!-- Auth step 1: sign in epic -->
+        <div class="mt-4 mb-5 text-center">
+            <label class="h6 mb-4">
+                <b>Step #1:</b> Go to <a href="" onclick="openEpicGamesPage();">www.epicgames.com</a> with your
+                browser<br />
+                and connect to your account<br />
+            </label><br />
+            <img src="ressources/header-epic-arrow.png" alt="Epic Sign In Button" width="600px">
+        </div>
+        <hr>
+
+        <!-- Auth step 2: get code -->
+        <div class="mt-4 mb-5 text-center">
+            <label class="h6 mb-4">
+                <b>Step #2:</b> Click <a href="" onclick="openAuthCodePage();">here</a> and copy your Authentication
+                Code<br />
+                <small class="text-muted"><b>Do NOT share this code</b></small>
+            </label><br />
+            <img src="ressources/epic-code-highlighted.png" alt="Epic Sign In Button" width="600px">
+        </div>
+        <hr>
+
+        <!-- Auth step 3: code input -->
+        <div class="mt-4 mb-5 text-center">
+            <label class="h6 mb-4" for="auth_input">
+                <b>Step #3:</b> Enter your authentication code<br />
+                <small class="text-muted"><b>Do NOT share this code</b></small>
+            </label>
+            <div class="input-group input-group-sm mx-auto" style="width: 70%;">
+                <input type="text" id="auth_input" class="form-control" placeholder="Authentication code"
+                    aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-success" type="button" onclick="setAuthCode();">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Success -->
+    <div class="mt-4 mb-5 text-center" id="auth_success_div" style="font-size: 14px; display: none; padding-top: 15px;">
+        <img src="ressources/connected-cloud.png" alt="Connected to Epic Servers" width="26px"><br /><br />
+        <label class="h6 mb-5" id="auth_success_label" style="font-size: smaller;">
+        </label><br />
+        <label class="h5 mt-5 mb-4">Ready to Track Stream Snipers!</label><br />
+        <button type="button" id="buttonGoToTracker" class="btn btn-outline-info" onclick="openTracker();">Tracker
+        </button>
+    </div>
+</body>
+
+</html>

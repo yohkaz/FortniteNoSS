@@ -97,6 +97,17 @@
 		}
 		initDatatable();
 
+        async function checkAuthStatus() {
+            var auth_status = await eel.fortnitewebapi_status()();
+            if (!auth_status) {
+                document.getElementById("player_username_id").placeholder = "Not connected to Epic Servers";
+				document.getElementById("player_username_id").style = "background-color: #FBBFBF;";
+				document.getElementById("player_username_id").disabled = "disabled";
+				document.getElementById("trackButton").disabled = "disabled";
+            }
+        }
+        checkAuthStatus();
+
 		async function updateDatatable() {
 			var all_players = await eel.get_all_players()();
 			datatable.clear().rows.add(all_players).draw();
@@ -160,7 +171,6 @@
 
 		.dataTables_wrapper .dataTables_paginate .paginate_button {
 			padding: 0.1em;
-			 !important
 		}
 
 		td.details-control {
@@ -195,11 +205,14 @@
 <body>
 	<!-- Navigation -->
 	<nav class="navbar navbar-expand navbar-dark bg-dark">
-		<a class="navbar-brand" href="#">Fortnite NoSS</a>
+		<a class="navbar-brand" href="auth.html">Fortnite NoSS</a>
 		<div class="collapse navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="auth.html">Auth</a>
+                </li>
 				<li class="nav-item active">
-					<a class="nav-link" href="#">Tracker <span class="sr-only">(current)</span></a>
+					<a class="nav-link" href="">Tracker <span class="sr-only">(current)</span></a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="settings.html">Settings</a>
@@ -259,7 +272,7 @@
 				</div>
 			</div>
 			<div class="col-sm-2">
-				<button type="button" class="btn btn-outline-success btn-sm" onclick="addPlayer();">Track</button>
+				<button type="button" id="trackButton" class="btn btn-outline-success btn-sm" onclick="addPlayer();">Track</button>
 			</div>
 		</div>
 	</div>
