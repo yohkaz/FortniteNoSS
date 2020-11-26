@@ -25,6 +25,13 @@ def analyze_replays():
     return noss.analyze_replays()
 
 @eel.expose
+def number_analyzed_replays():
+    number = noss.get_analyzed_replays()
+    if number is None:
+        return -1
+    return len(number)
+
+@eel.expose
 def number_new_replays():
     noss.set_replays_dir(read_replays_dir_path())
     number = len(noss.get_new_replays())

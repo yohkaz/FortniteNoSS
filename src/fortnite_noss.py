@@ -121,6 +121,15 @@ class FortniteNoSS:
             return files
 
 
+    def get_analyzed_replays(self):
+        with Database(self.db_filename) as db:
+            try:
+                all_replays = db.find_all_replays()
+                return all_replays
+            except:
+                return None
+
+
     def analyze_replays(self):
         if self.replays_dir is None:
             return False

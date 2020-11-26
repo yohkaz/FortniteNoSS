@@ -113,11 +113,17 @@
 			if (number_new_replays > 0) {
 				document.getElementById("newReplaysMsg").textContent = number_new_replays + ' new replay(s) detected!';
 			} else {
-				document.getElementById("newReplaysMsg").textContent = 'No new replay detected.'
+				document.getElementById("newReplaysMsg").textContent = 'No new replay detected'
 			}
 		}
 		checkNewReplays();
 		setInterval(checkNewReplays, 5000);
+
+		async function checkNumberAnalyzedReplays() {
+			var number_analyzed_replays = await eel.number_analyzed_replays()()
+			document.getElementById("analyzedReplaysMsg").textContent = number_analyzed_replays + ' replay(s) analyzed';
+		}
+		checkNumberAnalyzedReplays();
 
 		async function updateDatatable() {
 			var all_players = await eel.get_all_players()();
@@ -140,6 +146,7 @@
 			}
 			button.innerHTML = initialContent;
 			button.classList.remove('disabled');
+			checkNumberAnalyzedReplays();
 		}
 
 		async function addPlayer() {
@@ -294,7 +301,8 @@
 	<!-- Table -->
 	<div class="container mt-4 text-center" style="font-size: 13px;">
 		<label class="h6 mb-4">
-			Visualize the data collected
+			Visualize the data collected<br />
+			<small class="text-muted font-weight-bold" id="analyzedReplaysMsg"></small>
 		</label>
 		<table id="table_id" class="display">
 			<thead>
