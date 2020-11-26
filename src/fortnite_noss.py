@@ -99,15 +99,15 @@ class FortniteNoSS:
                 return False
 
 
-    def analyze_replays(self):
+    def get_new_replays(self):
         if self.replays_dir is None:
-            return False
+            return None
 
         with Database(self.db_filename) as db:
             try:
                 last_replay_file, last_replay_time = db.find_last_replay()
             except:
-                return False
+                return None
 
             files = os.listdir(self.replays_dir)
             # Filter out non replay files
@@ -118,12 +118,26 @@ class FortniteNoSS:
             # Sort replays from older to newer
             files.sort(key=lambda x: os.path.getmtime(os.path.join(self.replays_dir, x)))
 
+            return files
+
+
+    def analyze_replays(self):
+        if self.replays_dir is None:
+            return False
+
+        replays = self.get_new_replays()
+        if replays is None:
+            return False
+        elif len(replays) == 0:
+            return True
+
+        with Database(self.db_filename) as db:
             # Analyze each replay
             try:
                 #ss_players = db.find_all_players_ids()
                 ss_players = db.find_all_players()
-                for file in files:
-                    self.analyze_replay(self.replays_dir, file, ss_players, db)
+                for replay in replays:
+                    self.analyze_replay(self.replays_dir, replay, ss_players, db)
             except:
                 return False
 

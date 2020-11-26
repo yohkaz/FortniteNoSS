@@ -25,6 +25,14 @@ def analyze_replays():
     return noss.analyze_replays()
 
 @eel.expose
+def number_new_replays():
+    noss.set_replays_dir(read_replays_dir_path())
+    number = len(noss.get_new_replays())
+    if number is None:
+        return 0
+    return number
+
+@eel.expose
 def add_player(player, info):
     if player is None or player == '':
         return False

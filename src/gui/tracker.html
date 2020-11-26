@@ -108,6 +108,17 @@
         }
         checkAuthStatus();
 
+		async function checkNewReplays() {
+			var number_new_replays = await eel.number_new_replays()();
+			if (number_new_replays > 0) {
+				document.getElementById("newReplaysMsg").textContent = number_new_replays + ' new replay(s) detected!';
+			} else {
+				document.getElementById("newReplaysMsg").textContent = 'No new replay detected.'
+			}
+		}
+		checkNewReplays();
+		setInterval(checkNewReplays, 5000);
+
 		async function updateDatatable() {
 			var all_players = await eel.get_all_players()();
 			datatable.clear().rows.add(all_players).draw();
@@ -212,7 +223,7 @@
 					<a class="nav-link" href="about.html">About</a>
 				</li>
                 <li class="nav-item">
-                    <a class="nav-link" href="auth.html">Auth</a>
+                    <a class="nav-link" href="auth.html">Authentication</a>
                 </li>
 				<li class="nav-item active">
 					<a class="nav-link" href="">Tracker <span class="sr-only">(current)</span></a>
@@ -229,7 +240,8 @@
 	<div class="container mt-4 mb-4 text-center" style="font-size: 13px;">
 		<label class="h6 mb-4">
 			Analyze new replays<br />
-			<small class="text-muted">New replays are automatically detected</small>
+			<small class="text-muted">New replays are automatically detected</small><br />
+			<small class="text-muted font-weight-bold" id="newReplaysMsg"></small>
 		</label>
 		<div class="text-center">
 			<button type="button" id="buttonAnalyze" class="btn btn-outline-info btn-sm"
