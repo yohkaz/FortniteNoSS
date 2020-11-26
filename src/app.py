@@ -7,7 +7,7 @@ noss = FortniteNoSS()
 def init_gui():
     #noss.fortnitewebapi_set_auth_code('0e72e777ad574397b5c322c7b86705c5')
     eel.init(r'gui')
-    eel.start('auth.html', port=0, size=(780, 900))
+    eel.start('about.html', port=0, size=(780, 900))
 
 
 # Expose FortniteNoSS methods

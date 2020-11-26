@@ -2,9 +2,9 @@
 <html>
 
 <head>
-    <title>Fortnite NoSS</title>
+    <title>FortniteNoSS</title>
 
-	<!-- Favicon -->
+    <!-- Favicon -->
     <link rel="icon" type="ressources/png" href="ressources/favicon.ico">
 
     <!-- Include eel.js - note this file doesn't exist in the 'web' directory -->
@@ -22,6 +22,13 @@
     <script type="text/javascript" charset="utf8" src="include/DataTables/datatables.min.js"></script>
 
     <script type="text/javascript">
+        function openFortniteReplayDecompressorPage() {
+            window.open('https://github.com/Shiqan/FortniteReplayDecompressor');
+        }
+
+        function openFortniteNoSSPage() {
+            window.open('https://github.com/yohkaz/FortniteNoSS');
+        }
     </script>
 
     <style>
@@ -31,9 +38,12 @@
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand" href="auth.html">Fortnite NoSS</a>
+        <a class="navbar-brand" href="">FortniteNoSS</a>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="">About <span class="sr-only">(current)</span></a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="auth.html">Auth</a>
                 </li>
@@ -43,18 +53,43 @@
                 <li class="nav-item">
                     <a class="nav-link" href="settings.html">Settings</a>
                 </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">About <span class="sr-only">(current)</span></a>
-                </li>
             </ul>
         </div>
     </nav>
 
     <!-- Replays path input -->
-    <div class="mt-4 mb-5 text-center" style="font-size: 14px;">
-        <label class="h6 mb-4" for="replays_dir">
-            Fortnite NoSS (No Stream Snipers) is a tool that tracks potential stream snipers players using the replays
-            of your games.
+    <div class="p-4 text-center" style="font-size: 16px;">
+        <label class="h5">FortniteNoSS</label>
+        <hr style="margin: 0; padding: 0;" />
+        <label class="text-center">
+            Fortnite No Stream Snipers (FortniteNoSS) is a tool to track potential stream snipers players. <br />
+            The goal is to help streamers to determine if a player is stream sniping and if so, get Epic to ban this
+            player more easily.
+        </label>
+        <br /><br />
+        <label class="h6">Why is the Authentication step needed ?</label>
+        <hr style="margin: 0; padding: 0;" />
+        <label class="text-center" style="font-size: 14px;">
+            <b>If you prefer not to use your main Epic account, you can create and use a new one.</b><br />
+            Replays contain only the Account ID of players in the match.
+            In order to be able to convert between a Account ID and an Username, we need to send requests to the Epic
+            Servers.
+        </label>
+        <br /><br />
+        <label class="h6">How do you get the matches data ?</label>
+        <hr style="margin: 0; padding: 0;" />
+        <label class="text-center" style="font-size: 14px;">
+            <b>You need to have "Record Replays" set to ON in your Fortnite settings and specify the replay directory in
+                <a href="settings.html">Settings</a>!</b><br />
+            Using the <a href="" onclick="openFortniteReplayDecompressorPage();">FortniteReplayDecompressor</a> parser,
+            FortniteNoSS analyze your replays to collect data about your matches.
+        </label>
+        <br /><br />
+        <label class="h6">Found a bug ?</label>
+        <hr style="margin: 0; padding: 0;" />
+        <label class="text-center" style="font-size: 14px;">
+            Pass by the <a href="" onclick="openFortniteNoSSPage();">Github repository</a><br />
+            You can also send me a mail at yoh.kzl@gmail.com
         </label>
     </div>
 </body>
