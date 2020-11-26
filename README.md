@@ -1,11 +1,13 @@
 # Fortnite No Stream Snipers (FortniteNoSS)
 Fortnite No Stream Snipers (FortniteNoSS) is a tool to track potential stream snipers players.
 The goal is to help streamers to determine if a player is stream sniping and if so, get Epic to ban this player more easily.
-<br />
 
 ## Download
 I've not released the tool yet, but that should come soon!
-<br />
+
+## Tutorial
+Everything is explained in the tool itself.
+If you think something is not clear, feel free to contact me.
 
 ## General Questions
 
