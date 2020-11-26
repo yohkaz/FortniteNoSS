@@ -38,6 +38,11 @@
         checkAuthStatus();
 
         async function setAuthCode() {
+			var button = document.getElementById("buttonConfirmAuth");
+			var initialButtonContent = button.innerHTML;
+            button.innerHTML = "Connecting...";
+			button.classList.add("disabled");
+
             var auth_code = document.getElementById("auth_input").value;
             var auth_result = await eel.fortnitewebapi_set_auth_code(auth_code)();
             if (auth_result) {
@@ -46,6 +51,8 @@
                 document.getElementById("auth_input").placeholder = "Invalid auth code";
                 document.getElementById("auth_input").style = "background-color: #FBBFBF;";
             }
+			button.innerHTML = initialContent;
+			button.classList.remove('disabled');
         }
 
         function openEpicGamesPage() {
@@ -128,7 +135,7 @@
                 <input type="text" id="auth_input" class="form-control" placeholder="Authentication code"
                     aria-describedby="basic-addon2">
                 <div class="input-group-append">
-                    <button class="btn btn-outline-success" type="button" onclick="setAuthCode();">Confirm</button>
+                    <button class="btn btn-outline-success" id="buttonConfirmAuth" type="button" onclick="setAuthCode();">Confirm</button>
                 </div>
             </div>
         </div>
