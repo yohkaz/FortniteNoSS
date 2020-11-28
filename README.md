@@ -2,12 +2,41 @@
 Fortnite No Stream Snipers (FortniteNoSS) is a tool to track potential stream snipers players.
 The goal is to help streamers to determine if a player is stream sniping and if so, get Epic to ban this player more easily.
 
+The tool is targeted only to Windows platforms since Fortnite run only on Windows.
+
+<p align="center">
+<img src="screenshots/screenshot.png" width="400px">
+</p>
+
+
 ## Download
 I've not released the tool yet, but that should come soon!
+
+
+## Manual Installation
+If you prefer to install the tool manually, follow the instructions below.
+
+### Prerequisites
+ - Python 3.7+ (tested mainly with 3.8, but should work with other versions)
+ - .NET 5.0 ([https://dotnet.microsoft.com/download](https://dotnet.microsoft.com/download))
+
+### Install
+Open your command line *cmd.exe* and simply run the *install.bat* file from the root directory of the project
+```
+$ install.bat
+```
+
+### Usage
+After the install you should be in the *src/* directory.
+Run the following command:
+```
+$ python app.py
+```
 
 ## Tutorial
 Everything is explained in the tool itself.
 If you think something is not clear, feel free to contact me.
+
 
 ## General Questions
 
@@ -24,8 +53,3 @@ Using the [FortniteReplayDecompressor](https://github.com/Shiqan/FortniteReplayD
 **You need to have "Record Replays" set to ON in your Fortnite settings and specify the replay directory in the FortniteNoSS Settings!**
 
 
-## Screenshot
-
-<p align="center">
-<img src="screenshots/screenshot.png" width="400px">
-</p>
