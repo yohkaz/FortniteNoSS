@@ -21,9 +21,9 @@ If you prefer to install the tool manually, follow the instructions below.
  - .NET 5.0 ([https://dotnet.microsoft.com/download](https://dotnet.microsoft.com/download))
 
 ### Install
-Open your command line *cmd.exe* and simply run the *install.bat* file from the root directory of the project
+Open your command line *cmd.exe* and simply run the *build.bat* file from the root directory of the project
 ```
-$ install.bat
+$ build.bat
 ```
 
 ### Usage
