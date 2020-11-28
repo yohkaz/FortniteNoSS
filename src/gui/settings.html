@@ -24,38 +24,33 @@
 
 	<script type="text/javascript">
 		// Replays directory operations
-		async function setReplaysDir(path, save = false) {
-			if (await eel.check_directory(path)()) {
+		async function setReplaysDirInput(path) {
+			if (path) {
 				document.getElementById("replays_dir").value = path;
 				document.getElementById("replays_dir").placeholder = "";
 				document.getElementById("replays_dir").style = "background-color: #D3FBBF;";
-				if (save) {
-					await eel.save_replays_dir_path(path)();
-				}
 			} else {
 				document.getElementById("replays_dir").value = "";
 				document.getElementById("replays_dir").placeholder = "Invalid directory";
 				document.getElementById("replays_dir").style = "background-color: #FBBFBF;";
-				await eel.delete_replays_dir_path()();
 			}
 		}
 
-		async function setDefaultReplaysDir(delete_saved = false) {
-			if (delete_saved) {
-				await eel.delete_replays_dir_path()();
-			}
-
-			var saved_dir = await eel.read_replays_dir_path()();
-			if (saved_dir) {
-				setReplaysDir(saved_dir);
-				return;
-			}
-
-			var computer_user = await eel.get_computer_user()();
-			var default_path = "C:\\Users\\" + computer_user + "\\AppData\\Local\\FortniteGame\\Saved\\Demos";
-			setReplaysDir(default_path, true);
+		async function getReplaysDir() {
+			var path = await eel.get_replays_dir()();
+			setReplaysDirInput(path);
 		}
-		setDefaultReplaysDir();
+		getReplaysDir();
+
+		async function setReplaysDir(path) {
+			await eel.set_replays_dir(path)();
+			getReplaysDir();
+		}
+
+		async function setDefaultReplaysDir() {
+			await eel.set_default_replays_dir()();
+			getReplaysDir();
+		}
 
 		// Reset Database operation
 		async function resetDatabase() {
@@ -105,11 +100,11 @@
 				aria-describedby="basic-addon2">
 			<div class="input-group-append">
 				<button class="btn btn-outline-secondary" type="button"
-					onclick="setDefaultReplaysDir(true);">Default</button>
+					onclick="setDefaultReplaysDir();">Default</button>
 			</div>
 			<div class="input-group-append">
 				<button class="btn btn-outline-success" type="button"
-					onclick="setReplaysDir(document.getElementById('replays_dir').value, true);">Confirm</button>
+					onclick="setReplaysDir(document.getElementById('replays_dir').value);">Confirm</button>
 			</div>
 		</div>
 	</div>

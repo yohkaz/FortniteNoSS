@@ -21,7 +21,6 @@ def reset_database():
 
 @eel.expose
 def analyze_replays():
-    noss.set_replays_dir(read_replays_dir_path())
     return noss.analyze_replays()
 
 @eel.expose
@@ -33,7 +32,6 @@ def number_analyzed_replays():
 
 @eel.expose
 def number_new_replays():
-    noss.set_replays_dir(read_replays_dir_path())
     number = len(noss.get_new_replays())
     if number is None:
         return 0
@@ -63,6 +61,7 @@ def delete_player(account_id):
 
     return noss.delete_player(account_id)
 
+# Expose FortniteWebAPI methods
 @eel.expose
 def fortnitewebapi_status():
     return noss.fortnitewebapi_status()
@@ -81,37 +80,18 @@ def fortnitewebapi_session_username():
     return noss.fortnitewebapi_session_username()
 
 
-# Expose replays directory path operations
+# Expose replays directory path methods
 @eel.expose
-def check_directory(dir):
-    return os.path.isdir(dir)
+def set_replays_dir(path):
+    return noss.set_replays_dir(path)
 
 @eel.expose
-def get_computer_user():
-    user = os.getenv('username')
-    if user is None:
-        return ''
-    return user
+def set_default_replays_dir():
+    return noss.set_default_replays_dir()
 
 @eel.expose
-def save_replays_dir_path(path):
-    with open('replays_dir_path.txt', 'w') as f:
-        f.write(path)
-
-@eel.expose
-def delete_replays_dir_path():
-    try:
-        os.remove('replays_dir_path.txt')
-    except:
-        pass
-
-@eel.expose
-def read_replays_dir_path():
-    try:
-        with open('replays_dir_path.txt', 'r') as f:
-            return f.read()
-    except:
-        return None
+def get_replays_dir():
+    return noss.get_replays_dir()
 
 
 if __name__ == "__main__":

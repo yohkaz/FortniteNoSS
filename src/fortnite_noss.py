@@ -9,13 +9,21 @@ from database import Database
 class FortniteNoSS:
     def __init__(self):
         self.db_filename = r'./data.db'
-        self.replays_dir = None
+        self.fortnite_replay = FortniteReplay()
         self.fortnitewebapi  = FortniteWebAPI()
         self.fortnitewebapi.auth()
 
 
     def set_replays_dir(self, path):
-        self.replays_dir = path
+        return self.fortnite_replay.set_replays_dir(path)
+
+
+    def set_default_replays_dir(self):
+        return self.fortnite_replay.set_default_replays_dir()
+
+
+    def get_replays_dir(self):
+        return self.fortnite_replay.get_replays_dir()
 
 
     def fortnitewebapi_status(self):
@@ -100,7 +108,8 @@ class FortniteNoSS:
 
 
     def get_new_replays(self):
-        if self.replays_dir is None:
+        replays_dir = self.fortnite_replay.get_replays_dir()
+        if replays_dir is None:
             return None
 
         with Database(self.db_filename) as db:
@@ -109,14 +118,14 @@ class FortniteNoSS:
             except:
                 return None
 
-            files = os.listdir(self.replays_dir)
+            files = os.listdir(replays_dir)
             # Filter out non replay files
             files = list(filter(lambda x: x.endswith('.replay'), files))
             # Filter out already analyzed replays
             if last_replay_file:
-                files = list(filter(lambda x: os.path.getmtime(os.path.join(self.replays_dir, x)) > last_replay_time, files))
+                files = list(filter(lambda x: os.path.getmtime(os.path.join(replays_dir, x)) > last_replay_time, files))
             # Sort replays from older to newer
-            files.sort(key=lambda x: os.path.getmtime(os.path.join(self.replays_dir, x)))
+            files.sort(key=lambda x: os.path.getmtime(os.path.join(replays_dir, x)))
 
             return files
 
@@ -131,7 +140,8 @@ class FortniteNoSS:
 
 
     def analyze_replays(self):
-        if self.replays_dir is None:
+        replays_dir = self.fortnite_replay.get_replays_dir() 
+        if replays_dir is None:
             return False
 
         replays = self.get_new_replays()
@@ -146,19 +156,18 @@ class FortniteNoSS:
                 #ss_players = db.find_all_players_ids()
                 ss_players = db.find_all_players()
                 for replay in replays:
-                    self.analyze_replay(self.replays_dir, replay, ss_players, db)
+                    self.analyze_replay(replays_dir, replay, ss_players, db)
             except:
                 return False
 
             return True
 
 
-    @staticmethod
-    def analyze_replay(replays_dir, replay_file, ss_players, db):
+    def analyze_replay(self, replays_dir, replay_file, ss_players, db):
         print('FortniteNoSS: Analyzing', replay_file)
         try:
             replay_path = os.path.join(replays_dir, replay_file)
-            players_ids = FortniteReplay.get_players_ids(replay_path)
+            players_ids = self.fortnite_replay.get_players_ids(replay_path)
             db.create_replay(replay_file, os.path.getmtime(replay_path), players_ids)
         except:
             return False

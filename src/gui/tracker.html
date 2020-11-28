@@ -131,7 +131,7 @@
 		}
 
 		async function analyzeReplays() {
-			var saved_dir = await eel.read_replays_dir_path()();
+			var saved_dir = await eel.get_replays_dir()();
 			if (!saved_dir) {
 				$('.alert').show();
 				return;
