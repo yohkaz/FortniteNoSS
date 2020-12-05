@@ -22,6 +22,7 @@
 	<script type="text/javascript" src="include/DataTables/datatables.min.js"></script>
 
 	<script type="text/javascript">
+        window.resizeTo(780, 960);
 		var datatable;
 		async function initDatatable() {
 			var all_players = await eel.get_all_players()();
@@ -34,14 +35,14 @@
 						'data': null,
 						'defaultContent': ''
 					},
-					{ 'data': 0 },
 					{ 'data': 1 },
+					{ 'data': 0 },
 					{
-						'data': 2,
+						'data': 3,
 						'searchable': false
 					},
 					{
-						'data': 3,
+						'data': 2,
 						'visible': false,
 						'searchable': false
 					},
@@ -74,7 +75,7 @@
 					tr.removeClass('shown');
 				} else {
 					// Open this row
-					row.child(row.data()[3].replace(/,/g, '<br />')).show();
+					row.child(row.data()[2].replace(/,/g, '<br />')).show();
 					tr.addClass('shown');
 				}
 			});
@@ -83,7 +84,7 @@
 			$('#table_id tbody').on('click', 'td.reset-player', async function () {
 				var tr = $(this).closest('tr');
 				var row = datatable.row(tr);
-				await eel.reset_player(row.data()[1])();
+				await eel.reset_player(row.data()[0])();
 				updateDatatable();
 			});
 
@@ -91,7 +92,7 @@
 			$('#table_id tbody').on('click', 'td.delete-player', async function () {
 				var tr = $(this).closest('tr');
 				var row = datatable.row(tr);
-				await eel.delete_player(row.data()[1])();
+				await eel.delete_player(row.data()[0])();
 				updateDatatable();
 			});
 		}
@@ -236,6 +237,9 @@
 					<a class="nav-link" href="">Tracker <span class="sr-only">(current)</span></a>
 				</li>
 				<li class="nav-item">
+					<a class="nav-link" href="last_match.html">Last Match</a>
+				</li>
+				<li class="nav-item">
 					<a class="nav-link" href="settings.html">Settings</a>
 				</li>
 			</ul>
@@ -299,7 +303,7 @@
 
 
 	<!-- Table -->
-	<div class="container mt-4 text-center" style="font-size: 13px;">
+	<div class="container mt-4 pb-4 text-center" style="font-size: 13px;">
 		<label class="h6 mb-4">
 			Visualize the data collected<br />
 			<small class="text-muted font-weight-bold" id="analyzedReplaysMsg"></small>

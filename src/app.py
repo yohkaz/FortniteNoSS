@@ -5,15 +5,14 @@ from fortnite_noss import FortniteNoSS
 noss = FortniteNoSS()
 
 def init_gui():
-    #noss.fortnitewebapi_set_auth_code('0e72e777ad574397b5c322c7b86705c5')
     eel.init(r'gui')
-    eel.start('about.html', port=0, size=(780, 900))
+    eel.start('about.html', port=0)
 
 
 # Expose FortniteNoSS methods
 @eel.expose
 def get_all_players():
-    return list(map(lambda p: (p[1], p[0], p[3], p[2]), noss.get_all_players()))
+    return noss.get_all_players()
 
 @eel.expose
 def reset_database():
@@ -60,6 +59,10 @@ def delete_player(account_id):
         return False
 
     return noss.delete_player(account_id)
+
+@eel.expose
+def get_last_replay_data():
+    return noss.get_last_replay_data()
 
 # Expose FortniteWebAPI methods
 @eel.expose

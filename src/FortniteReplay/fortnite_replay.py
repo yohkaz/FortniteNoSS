@@ -1,5 +1,6 @@
 import os
 import subprocess
+import json
 
 class FortniteReplay:
     def __init__(self):
@@ -55,7 +56,7 @@ class FortniteReplay:
             return None
 
 
-    def get_players_ids(self, replay_path):
+    def get_replay_data(self, replay_path):
         if replay_path is None:
             return None
 
@@ -67,11 +68,55 @@ class FortniteReplay:
         process = subprocess.Popen([dotnet_exe_path, replay_path], startupinfo=startupinfo, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
         output = process.stdout.read().decode('utf-8')
 
-        #output = subprocess.check_output([dotnet_exe_path, replay_path], shell=True).decode('utf-8')
-        list_of_player_ids = output.split(',')[:-1]
-        list_of_player_ids = list(map(lambda x: x.lower(), list_of_player_ids))
-        return list_of_player_ids
+        # TODO: Check if this catch analyzing a replay not completed (while still in game)
+        error = process.stderr.read().decode('utf-8')
+        if error:
+            raise RuntimeError('FortniteReplay: ' + error)
 
+        replay_data = json.loads(output)
+        replay_data['filename'] = os.path.basename(replay_path)
+        return replay_data
+
+    @staticmethod
+    def extract_players_ids(replay_data):
+        players = replay_data['players']
+        players_ids = [p['PlayerId'] for p in players]
+        players_ids = list(map(lambda x: x.lower(), players_ids))
+        return players_ids
+
+    @staticmethod
+    def extract_players(replay_data):
+        players_by_id = {}
+        players_data = replay_data['players']
+        for player in players_data:
+            player['PlayerId'] = player['PlayerId'].lower()
+            player['Platform'] = player['Platform'].lower()
+            players_by_id[player['PlayerId']] = player
+
+        return players_by_id
+
+    @staticmethod
+    def extract_killfeed(replay_data):
+        killfeed = replay_data['killfeed']
+        killfeed_arr = []
+
+        for kf in killfeed:
+            kf_dict = {}
+
+            # Killer info
+            kf_dict['EliminatorID'] = kf['Eliminator'].lower()
+            # Killed info
+            kf_dict['EliminatedID'] = kf['Eliminated'].lower()
+            # Action info
+            if kf['Knocked'] == 'true':
+                kf_dict['Action'] = "Knocked"
+            else:
+                kf_dict['Action'] = "Killed"
+            # Time info
+            kf_dict['Time'] = kf['Time']
+            killfeed_arr.append(kf_dict)
+
+        return killfeed_arr
 
     @staticmethod
     def check_directory(dir):

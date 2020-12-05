@@ -12,6 +12,7 @@ class FortniteNoSS:
         self.fortnite_replay = FortniteReplay()
         self.fortnitewebapi  = FortniteWebAPI()
         self.fortnitewebapi.auth()
+        self.last_replay = None
 
 
     def set_replays_dir(self, path):
@@ -167,9 +168,12 @@ class FortniteNoSS:
         print('FortniteNoSS: Analyzing', replay_file)
         try:
             replay_path = os.path.join(replays_dir, replay_file)
-            players_ids = self.fortnite_replay.get_players_ids(replay_path)
+            replay_data = self.fortnite_replay.get_replay_data(replay_path)
+            players_ids = self.fortnite_replay.extract_players_ids(replay_data)
             db.create_replay(replay_file, os.path.getmtime(replay_path), players_ids)
-        except:
+            self.last_replay = replay_data
+        except Exception as e:
+            print(e)
             return False
 
         # Check if stream snipers players are in this replay
@@ -187,6 +191,58 @@ class FortniteNoSS:
                 except:
                     return False
 
+
+    def get_last_replay_data(self):
+        # Retrieve data from the last replay analyzed
+        if self.last_replay is None:
+            analyzed_replays = self.get_analyzed_replays()
+            if analyzed_replays is None or len(analyzed_replays) == 0:
+                return None
+
+            replays_dir = self.fortnite_replay.get_replays_dir() 
+            if replays_dir is None:
+                return None
+
+            replay_file = analyzed_replays[-1][0]
+            replay_path = os.path.join(replays_dir, replay_file)
+            self.last_replay = self.fortnite_replay.get_replay_data(replay_path)
+
+        players_by_id = self.fortnite_replay.extract_players(self.last_replay)
+        players_ids_usernames = self.fortnitewebapi.multiple_players_by_id(list(players_by_id.keys()))
+
+        data = {}
+        # Filename
+        data['filename'] = self.last_replay['filename']
+
+        # Players data
+        tracked_players_ids = [p[0] for p in self.get_all_players()]
+        players_data = []
+        for player in players_ids_usernames:
+            platform = players_by_id[player['id']]['Platform']
+            if platform == 'win':
+                username = player['displayName']
+            else:
+                username = player['externalAuths'][platform]['externalDisplayName']
+
+            players_by_id[player['id']]['username'] = username
+            tracked = 'Not Tracked'
+            if player['id'] in tracked_players_ids:
+                tracked = 'Tracked'
+            players_data.append([username, player['id'], tracked])
+        data['players'] = players_data
+
+        # Killfeed data
+        killfeed = self.fortnite_replay.extract_killfeed(self.last_replay)
+        for kf in killfeed:
+            kf['Eliminator'] = 'bot'
+            kf['Eliminated'] = 'bot'
+            if kf['EliminatorID'] != 'bot':
+                kf['Eliminator'] = players_by_id[kf['EliminatorID']]['username']
+            if kf['EliminatedID'] != 'bot':
+                kf['Eliminated'] = players_by_id[kf['EliminatedID']]['username']
+        data['killfeed'] = killfeed
+
+        return data
 
     def player_username_to_id(self, username):
         if self.fortnitewebapi.auth_status():

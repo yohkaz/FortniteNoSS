@@ -129,6 +129,21 @@ class FortniteWebAPI():
         except:
             return None
 
+    def multiple_players_by_id(self, accounts_ids):
+        if len(accounts_ids) == 1:
+            return [self.player_by_id(accounts_ids[0])]
+
+        try:
+            url = endpoints.account_multiple_by_id
+            url += '?accountId=' + accounts_ids[0]
+            for account_id in accounts_ids[1:]:
+                url += '&accountId=' + account_id
+
+            response = self.session.get(url)
+            return response
+        except:
+            return None
+
 
 class Session:
     def __init__(self, username, access_token, refresh_token, expires_at, fortnite_token):
