@@ -12,7 +12,8 @@ The tool is targeted only to Windows platforms since Fortnite run only on Window
 
 
 ## Download
-I've not released the tool yet, but that should come soon!
+You can download the tool in the [Release page](https://github.com/yohkaz/FortniteNoSS/releases). \
+Download the last version of the tool as a .zip file (FortniteNoSS.zip). Extract its content, and run FortniteNoSS.exe.
 
 
 ## Manual Installation
@@ -23,7 +24,7 @@ If you prefer to install the tool manually, follow the instructions below.
  - .NET 5.0 ([https://dotnet.microsoft.com/download](https://dotnet.microsoft.com/download))
 
 ### Install
-Clone the repository
+Download or clone the repository
 ```
 $ git clone https://github.com/yohkaz/FortniteNoSS.git
 ```
