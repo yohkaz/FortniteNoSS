@@ -5,9 +5,9 @@ The goal is to help streamers to determine if a player is stream sniping and if 
 The tool is targeted only to Windows platforms since Fortnite run only on Windows.
 
 <p align="center">
-<img src="screenshots/tracker.png" width="300px">
-<img src="screenshots/last-match-players.png" width="300px">
-<img src="screenshots/last-match-killfeed.png" width="385px">
+<img src="screenshots/tracker.PNG" width="300px">
+<img src="screenshots/last-match-players.PNG" width="300px">
+<img src="screenshots/last-match-killfeed.PNG" width="385px">
 </p>
 
 
