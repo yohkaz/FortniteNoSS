@@ -23,6 +23,18 @@
 
     <script type="text/javascript">
         window.resizeTo(780, 960);
+
+        async function checkAuthStatus() {
+            var auth_status = await eel.fortnitewebapi_status()();
+            if (auth_status) {
+				document.getElementById("playersListButton").disabled = false;
+				document.getElementById("killfeedButton").disabled = false;
+            } else {
+			    document.getElementById("authStatusMsg").textContent = 'Authentication required!';
+            }
+        }
+        checkAuthStatus();
+
         async function initDatatable() {
             var last_replay_data = await eel.get_last_replay_data()();
             if (!last_replay_data) {
@@ -102,7 +114,7 @@
                     <a class="nav-link" href="tracker.html">Tracker</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="">Last Match <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="#">Last Match <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="settings.html">Settings</a>
@@ -113,12 +125,13 @@
 
     <div class="text-center mt-4 mb-5">
         <label class="h6 mb-4">
-            Last Match Details
+            Last Match Details<br />
+			<small class="text-muted font-weight-bold" id="authStatusMsg"></small>
         </label><br />
-        <button type="button" class="btn btn-info" onclick="showPlayersList()">
+        <button type="button" id="playersListButton" class="btn btn-info" onclick="showPlayersList()" disabled>
             Players List
         </button>
-        <button type="button" class="btn btn-info" onclick="showKillfeed()">
+        <button type="button" id="killfeedButton" class="btn btn-info" onclick="showKillfeed()" disabled>
             Killfeed
         </button>
     </div>

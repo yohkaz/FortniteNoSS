@@ -209,6 +209,8 @@ class FortniteNoSS:
 
         players_by_id = self.fortnite_replay.extract_players(self.last_replay)
         players_ids_usernames = self.fortnitewebapi.multiple_players_by_id(list(players_by_id.keys()))
+        if players_ids_usernames is None:
+            return None
 
         data = {}
         # Filename
