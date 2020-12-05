@@ -75,7 +75,9 @@
 					tr.removeClass('shown');
 				} else {
 					// Open this row
-					row.child(row.data()[2].replace(/,/g, '<br />')).show();
+					replays = row.data()[2].split(',').reverse().join('<br />');
+					row.child(replays).show();
+					//row.child(row.data()[2].replace(/,/g, '<br />')).show();
 					tr.addClass('shown');
 				}
 			});

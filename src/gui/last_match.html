@@ -30,7 +30,7 @@
 				document.getElementById("playersListButton").disabled = false;
 				document.getElementById("killfeedButton").disabled = false;
             } else {
-			    document.getElementById("authStatusMsg").textContent = 'Authentication required!';
+			    document.getElementById("msg").textContent = 'Authentication required!';
             }
         }
         checkAuthStatus();
@@ -41,6 +41,7 @@
                 return;
             }
 
+            document.getElementById("msg").textContent = last_replay_data['filename'];
             $('#table_players_list').DataTable({
                 data: last_replay_data['players'],
                 columns: [
@@ -126,7 +127,7 @@
     <div class="text-center mt-4 mb-5">
         <label class="h6 mb-4">
             Last Match Details<br />
-			<small class="text-muted font-weight-bold" id="authStatusMsg"></small>
+			<small class="text-muted font-weight-bold" id="msg"></small>
         </label><br />
         <button type="button" id="playersListButton" class="btn btn-info" onclick="showPlayersList()" disabled>
             Players List
