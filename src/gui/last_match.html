@@ -111,21 +111,23 @@
         </div>
     </nav>
 
-	<div class="text-center mt-4 mb-5">
-			<button type="button" class="btn btn-info" onclick="showPlayersList()">
-				Players List
-			</button>
-			<button type="button" class="btn btn-info" onclick="showKillfeed()">
-				Killfeed
-			</button>
-	</div>
+    <div class="text-center mt-4 mb-5">
+        <label class="h6 mb-4">
+            Last Match Details
+        </label><br />
+        <button type="button" class="btn btn-info" onclick="showPlayersList()">
+            Players List
+        </button>
+        <button type="button" class="btn btn-info" onclick="showKillfeed()">
+            Killfeed
+        </button>
+    </div>
     <hr>
 
     <!-- Players Table -->
     <div id="div_players_list" class="container mt-4 text-center pb-4" style="font-size: 13px; display: none;">
         <label class="h6 mb-4">
             Players List<br />
-            <small class="text-muted font-weight-bold" id="analyzedReplaysMsg"></small>
         </label>
         <table id="table_players_list" class="display">
             <thead>
@@ -146,7 +148,6 @@
         <div class="container text-center">
             <label class="h6 mb-4">
                 Killfeed<br />
-                <small class="text-muted font-weight-bold" id="analyzedReplaysMsg"></small>
             </label>
         </div>
         <table id="table_killfeed" class="display">
