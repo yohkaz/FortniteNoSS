@@ -23,6 +23,10 @@ If you prefer to install the tool manually, follow the instructions below.
  - .NET 5.0 ([https://dotnet.microsoft.com/download](https://dotnet.microsoft.com/download))
 
 ### Install
+Clone the repository
+```
+$ git clone https://github.com/yohkaz/FortniteNoSS.git
+```
 Open your command line *cmd.exe* and simply run the *build.bat* file from the root directory of the project
 ```
 $ build.bat
